@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include "./../drivers/A4988.h"
+#include "A4988.h"
 
 #define STEP 3
 #define DIR 4
