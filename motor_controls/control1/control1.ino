@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include "A4988.h"
+#include "./../drivers/A4988.h"
 
 #define STEP 3
 #define DIR 4
@@ -34,7 +34,7 @@ const int delta = FULL_ANGLE/SECTORS;
  * 0 is the home position, or the position that the 
  * servo motor starts from. 
  */
-int sequence_len = 5; 
+const int sequence_len = 5; 
 int sequence[sequence_len] = {1, 4, 3, 1, 3}; 
 int current_pos; 
 
