@@ -28,6 +28,7 @@ const uri = 'mongodb+srv://miteshDB:0005MKak01@gqlmitesh-ic1rs.mongodb.net/test?
     app.listen(3001, () => {
         console.log('now listening for requests on port 3001'); 
     }); 
+
 }
 
 server(); 
