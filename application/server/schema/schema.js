@@ -121,20 +121,43 @@ const Mutation = new GraphQLObjectType({
                 update: { type: new GraphQLNonNull(GraphQLInt) }
             },
 
-            resolve (parent, args) {
+            async resolve (parent, args) {
 
-                return Medicine.findByIdAndUpdate(
-                    args.id,
-                    { $inc: { count: args.update }},
-                    { new: true, useFindAndModify: true },
-                    function(err, response) {
-                        if (err) {
-                            console.log("Error updating medicine counts.");  
-                        } else {
-                            console.log("Medicine updated successfully.");
-                        }
+                try {
+                    let res =  await Medicine.findByIdAndUpdate(
+                        args.id,
+                        { $inc: { count: args.update }},
+                        { new: true, useFindAndModify: false }
+                    );
+
+                    if (res.count < 0) {
+                        res = null; 
+                        await Medicine.findByIdAndDelete(args.id); 
                     }
-                );
+
+                    return res; 
+                } catch(err) {
+                    console.error(err); 
+                    console.log('Medicine with this id does not exist. Cannot be modified.');
+                    return null; 
+                }
+            }
+        },
+
+        deleteMedicine: {
+            type: MedicineType,
+            args: {
+                id: { type: new GraphQLNonNull(GraphQLID)}
+            },
+
+            async resolve (parent, args) {
+                try {
+                    let res = await Medicine.findByIdAndDelete(args.id);
+                    return res; 
+                } catch (err) {
+                    console.log('Medicine with this id does not exist. Cannot be deleted');
+                    return null; 
+                }
             }
         }
     }
@@ -145,3 +168,5 @@ module.exports = new GraphQLSchema({
     query: RootQuery,
     mutation: Mutation
 }); 
+
+
