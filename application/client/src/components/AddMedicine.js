@@ -3,73 +3,115 @@ import { graphql } from 'react-apollo';
 
 // queries
 import { getDayOfWeeksQuery, addMedicineMutation } from '../queries/queries'; 
+import _ from 'lodash'; 
 
-var compose = require('lodash.flowright'); 
+var compose = require('lodash/flowRight');
+
+
+function Checkbox(props) {
+    
+    if (props.disabled) {
+        return (
+            <label>
+                {props.name}
+                <input type="checkbox" disabled={true}/>
+            </label>
+        );
+    } else {
+        return (
+            <label>
+                {props.name}
+                <input 
+                    type="checkbox" 
+                    disabled={false} 
+                    onClick={ props.onClick }
+                />
+            </label>
+        );
+    }
+}
+
 
 class AddMedicine extends Component {
-
+    
     constructor(props) {
         super(props);
         this.state = {
             name: '',
-            count: 0,
-            times: {},
-            dayNames: {}
+            days: new Map(),
+            times: new Map(),
+            count: ''
         };
     }
 
-    handleInputChange (e) {
-        // console.log(e.target.name); 
-        // console.log(e.target.name in (this.state)); 
-        // if (e.target.name in (this.state.dayNames)) {
-        //     delete (this.state.dayNames)[e.target.name];
-        // } else {
-        //     (this.state.dayNames)[e.target.name] = true; 
-        // }
-        // console.log(this.state.dayNames); 
-        console.log(this); 
+    handleCheckClick = (name) => {
+        const days = new Map(this.state.days);
+        if (days.has(name)) {
+            days.delete(name); 
+        } else {
+            days.set(name, true); 
+        }
+
+        this.setState({ days: days })
+        console.log(this.state); 
     }
 
-    submitForm(e) {
-        e.preventDefault(); 
-        this.props.addMedicineMutation({
-            variables: {
-                name: this.state.name,
-                count: this.state.count,
-                times: Object.keys(this.state.times),
-                dayNames: Object.key(this.state.dayNames)
-            },
-            refetchQueries: [{query: getDayOfWeeksQuery }]
-        });
-    }
 
-    displayDays() {
+    displayDays = () => {
         let data = this.props.getDayOfWeeksQuery; 
         if (data.loading) {
-            return (<option disabled>Loading Days...</option>);
+            return (
+                <li>
+                    <Checkbox name="Loading..." disabled={ true } />
+                </li>
+            );
         } else {
-            return data.dayOfWeeks.map((day) => {
-                let dayName = day._id; 
-                return (
-                    <div key={dayName}>
-                        <label>
-                            {dayName}
-                            <input 
+            return (
+                this.props.getDayOfWeeksQuery.dayOfWeeks.map((dayObj) => {
+                    const dayName = dayObj._id; 
+                    return (
+                        <li key={dayName}>
+                            <Checkbox 
                                 name={dayName}
-                                type="checkbox"
-                                onChange={this.handleInputChange}/>
-                        </label>
-                    </div>
-                );
-            });
+                                disabled={false}
+                                onClick={() => this.handleCheckClick(dayName)}
+                            />
+                        </li>
+                    );
+                })
+            );
         }
-    } 
+    }
 
-  	render () {    
-        console.log(this);    
+  	render () { 
+          
     	return (
-            <form id="add-medicine" onSubmit={ this.submitForm.bind(this) }>
-                {this.displayDays()}
+            <form id="add-medicine">
+                <div className="field">
+                    <label>Medicine name:</label>
+                    <input type="text"/>
+                </div>
+
+                <div className="field">
+                    <label>Days:</label>
+                    <ul>
+                        {this.displayDays()}
+                    </ul>
+                </div>
+
+                <div className="field">
+                    <label>
+                        Times:
+                        <input type="checkbox"/> 
+                    </label>
+                       
+                </div>
+
+                <div className="field">
+                    <label>Count:</label>
+                    <input type="text"/>
+                </div>
+                <button>Submit</button>
             </form>
     	);
   	}
