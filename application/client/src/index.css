@@ -1,0 +1,8 @@
+@font-face {
+  font-family: Nunito-SemiBold;
+  src: url(./fonts/Nunito-SemiBold.ttf);
+}
+body {
+  background: #eee; 
+  font-family: Nunito-SemiBold;
+}

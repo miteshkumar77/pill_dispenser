@@ -35,7 +35,7 @@ const DayOfWeekType = new GraphQLObjectType({
         medications: {
             type: GraphQLList(MedicineType),
             resolve(parent, args) {
-                return Medicine.find({ dayNames: parent._id });
+                return Medicine.find({ dayNames: parent._id }); 
             }
         }
     })
@@ -79,19 +79,19 @@ const RootQuery = new GraphQLObjectType({
 const Mutation = new GraphQLObjectType({
     name: 'Mutation',
     fields: {
-        // addDayOfWeek: {
-        //     type: DayOfWeekType,
-        //     args: {
-        //         name: { type: new GraphQLNonNull(GraphQLString) }
-        //     },
-        //     resolve(parent, args) {
-        //         let dayOfWeek = new DayOfWeek({
-        //             _id: args.name
-        //         });
+        addDayOfWeek: {
+            type: DayOfWeekType,
+            args: {
+                name: { type: new GraphQLNonNull(GraphQLString) }
+            },
+            resolve(parent, args) {
+                let dayOfWeek = new DayOfWeek({
+                    _id: args.name,
+                });
                 
-        //         return dayOfWeek.save(); 
-        //     }
-        // }
+                return dayOfWeek.save(); 
+            }
+        },
 
         addNewMedicine: {
             type: MedicineType,
@@ -108,8 +108,8 @@ const Mutation = new GraphQLObjectType({
                     count: args.count,
                     times: args.times,
                     dayNames: args.dayNames
-                });
-
+                }); 
+                
                 return medicine.save(); 
             }
         },
