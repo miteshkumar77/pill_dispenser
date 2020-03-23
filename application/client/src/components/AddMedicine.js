@@ -3,7 +3,6 @@ import { graphql } from 'react-apollo';
 
 // queries
 import { getDayOfWeeksQuery, addMedicineMutation } from '../queries/queries'; 
-import _ from 'lodash'; 
 
 var compose = require('lodash/flowRight');
 
@@ -24,7 +23,8 @@ function Checkbox(props) {
                 <input 
                     type="checkbox" 
                     disabled={false} 
-                    onClick={ props.onClick }
+                    onChange={ props.onChange }
+                    checked={ props.checked }
                 />
             </label>
         );
@@ -78,7 +78,8 @@ class AddMedicine extends Component {
                             <Checkbox 
                                 name={dayName}
                                 disabled={false}
-                                onClick={() => this.handleDaysInput(dayName)}
+                                onChange={ () => this.handleDaysInput(dayName) }
+                                checked={ this.state.days.has(dayName) }
                             />
                         </li>
                     );
@@ -178,6 +179,30 @@ class AddMedicine extends Component {
 
     }
 
+    submitForm = (e) => {
+        e.preventDefault();
+        this.props.addMedicineMutation({
+            variables: {
+                name: this.state.name,
+                count: Number.parseInt(this.state.count),
+                times: this.state.times.split(',').map(term => Number.parseInt(term.trim())),
+                dayNames: Array.from(this.state.days.keys())
+            },
+            refetchQueries: [{ query: getDayOfWeeksQuery }]
+        });
+
+        this.setState({
+            name: '',
+            days: new Map(),
+            times: '',
+            count: '',
+            nameValid: false,
+            daysValid: false,
+            timesValid: false,
+            countValid: false
+        });
+    }
+
 
   	render () { 
          
@@ -185,7 +210,7 @@ class AddMedicine extends Component {
         console.log(this.state); 
 
     	return (
-            <form id="add-medicine">
+            <form id="add-medicine" onSubmit={ (e) => this.submitForm(e) }>
                 <div className="field">
                     <label>Medicine name: {this.returnFieldDescription('nameValid')} </label>
                     <input type="text" value={this.state.name} onChange={(e) => this.handleNameInput(e)}/>
