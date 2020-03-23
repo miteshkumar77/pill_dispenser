@@ -39,12 +39,16 @@ class AddMedicine extends Component {
         this.state = {
             name: '',
             days: new Map(),
-            times: new Map(),
-            count: ''
+            times: '',
+            count: '',
+            nameValid: false,
+            daysValid: false,
+            timesValid: false,
+            countValid: false
         };
     }
 
-    handleCheckClick = (name) => {
+    handleDaysInput = (name) => {
         const days = new Map(this.state.days);
         if (days.has(name)) {
             days.delete(name); 
@@ -53,7 +57,7 @@ class AddMedicine extends Component {
         }
 
         this.setState({ days: days })
-        console.log(this.state); 
+        this.checkDaysValid(days);
     }
 
 
@@ -74,7 +78,7 @@ class AddMedicine extends Component {
                             <Checkbox 
                                 name={dayName}
                                 disabled={false}
-                                onClick={() => this.handleCheckClick(dayName)}
+                                onClick={() => this.handleDaysInput(dayName)}
                             />
                         </li>
                     );
@@ -83,17 +87,113 @@ class AddMedicine extends Component {
         }
     }
 
+    submitButton = () => {
+        
+        let disabled = false;
+        let marking = (<span>&#x2713;</span>);
+        
+        if (
+            !this.state.countValid ||
+            !this.state.daysValid ||
+            !this.state.nameValid ||
+            !this.state.timesValid
+        ) {
+            disabled = true;
+            marking = (<span>incomplete</span>)
+        }
+
+        return (<button disabled={disabled}>{marking}</button>)
+
+        
+    }
+
+    handleNameInput = (e) => {
+        this.setState({
+            name: e.target.value 
+        });
+        this.checkNameValid(e.target.value); 
+    }
+
+    handleCountInput = (e) => {
+        this.setState({
+            count: e.target.value 
+        });
+        this.checkCountValid(e.target.value);
+    }
+
+    
+    handleTimesInput = (e) => {
+        this.setState({
+            times: e.target.value
+        });
+        this.checkTimesValid(e.target.value);
+    }
+
+    checkNameValid = (name) => {
+        if (name == '') {
+            this.setState({ nameValid: false });
+        } else {
+            this.setState({ nameValid: true });
+        }
+    }
+
+    checkDaysValid = (days) => {
+        if (days.size === 0) {
+            this.setState({ daysValid: false });
+        } else {
+            this.setState({ daysValid: true });
+        }
+         
+    }
+
+    checkTimesValid = (times) => {
+        const valid = times.split(',').every((time) => {
+           return !(Number.isNaN(Number.parseInt(time.trim())) ||
+            Number.parseInt(time.trim()) > 24 ||
+            Number.parseInt(time.trim()) < 0);
+        });
+
+        if (valid) {
+            this.setState({ timesValid: true });
+        } else {
+            this.setState({ timesValid: false });
+        }
+    }
+
+    checkCountValid = (count) => {
+        if (
+            Number.isNaN(Number.parseInt(count)) ||
+            Number.parseInt(count) <= 0
+        ) {
+            this.setState({ countValid: false });
+        } else {
+            this.setState({ countValid: true });
+        }
+    }
+
+    returnFieldDescription = (field) => {
+        return this.state[field]?
+        (<h5 id="accepted-mark">Accepted field</h5>):
+        (<h5 id="invalid-mark">Invalid field</h5>);
+
+    }
+
+
   	render () { 
-          
+         
+         
+        console.log(this.state); 
+
     	return (
             <form id="add-medicine">
                 <div className="field">
-                    <label>Medicine name:</label>
-                    <input type="text"/>
+                    <label>Medicine name: {this.returnFieldDescription('nameValid')} </label>
+                    <input type="text" value={this.state.name} onChange={(e) => this.handleNameInput(e)}/>
+                    
                 </div>
 
                 <div className="field">
-                    <label>Days:</label>
+                    <label>Days: {this.returnFieldDescription('daysValid')}</label>
                     <ul>
                         {this.displayDays()}
                     </ul>
@@ -101,17 +201,17 @@ class AddMedicine extends Component {
 
                 <div className="field">
                     <label>
-                        Times:
-                        <input type="checkbox"/> 
+                        Times (Integers, comma separated):{this.returnFieldDescription('timesValid')}
+                        <input type="text" value={ this.state.times } onChange={ (e) => this.handleTimesInput(e) }/>
                     </label>
                        
                 </div>
 
                 <div className="field">
-                    <label>Count:</label>
-                    <input type="text"/>
+                    <label>Count (Integer):{this.returnFieldDescription('countValid')}</label>
+                    <input type="text" value={ this.state.count } onChange={ (e) => this.handleCountInput(e) }/>
                 </div>
-                <button>Submit</button>
+                {this.submitButton()}
             </form>
     	);
   	}
