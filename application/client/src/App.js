@@ -6,6 +6,8 @@ import { ApolloProvider } from 'react-apollo';
 
 import DayOfWeeks from './components/DayOfWeeks';
 import AddMedicine from './components/AddMedicine';
+import ManageMedicine from './components/ManageMedicine';
+
 // apollo client setup 
 const client = new ApolloClient({
 	uri: 'http://localhost:3001/graphql'
@@ -18,6 +20,7 @@ class App extends Component {
 				<div id="main">
 					<h1>Medication Reminders:</h1>
                     <DayOfWeeks/>
+					<ManageMedicine/>
 					<AddMedicine/>
 				</div>
 			</ApolloProvider>

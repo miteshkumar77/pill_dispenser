@@ -7,7 +7,7 @@ import { getDayOfWeeksQuery, addMedicineMutation } from '../queries/queries';
 var compose = require('lodash/flowRight');
 
 
-function Checkbox(props) {
+const Checkbox = (props) => {
     
     if (props.disabled) {
         return (
@@ -131,7 +131,7 @@ class AddMedicine extends Component {
     }
 
     checkNameValid = (name) => {
-        if (name == '') {
+        if (name === '') {
             this.setState({ nameValid: false });
         } else {
             this.setState({ nameValid: true });
@@ -205,39 +205,36 @@ class AddMedicine extends Component {
 
 
   	render () { 
-         
-         
-        console.log(this.state); 
-
+    
     	return (
-            <form id="add-medicine" onSubmit={ (e) => this.submitForm(e) }>
-                <div className="field">
-                    <label>Medicine name: {this.returnFieldDescription('nameValid')} </label>
-                    <input type="text" value={this.state.name} onChange={(e) => this.handleNameInput(e)}/>
-                    
-                </div>
+                <form id="add-medicine" onSubmit={ (e) => this.submitForm(e) }>
+                    <div className="field">
+                        <label>Medicine name: {this.returnFieldDescription('nameValid')} </label>
+                        <input type="text" value={this.state.name} onChange={(e) => this.handleNameInput(e)}/>
+                        
+                    </div>
 
-                <div className="field">
-                    <label>Days: {this.returnFieldDescription('daysValid')}</label>
-                    <ul>
-                        {this.displayDays()}
-                    </ul>
-                </div>
+                    <div className="field">
+                        <label>Days: {this.returnFieldDescription('daysValid')}</label>
+                        <ul>
+                            {this.displayDays()}
+                        </ul>
+                    </div>
 
-                <div className="field">
-                    <label>
-                        Times (Integers, comma separated):{this.returnFieldDescription('timesValid')}
-                        <input type="text" value={ this.state.times } onChange={ (e) => this.handleTimesInput(e) }/>
-                    </label>
-                       
-                </div>
+                    <div className="field">
+                        <label>
+                            Times (Integers, comma separated):{this.returnFieldDescription('timesValid')}
+                            <input type="text" value={ this.state.times } onChange={ (e) => this.handleTimesInput(e) }/>
+                        </label>
+                        
+                    </div>
 
-                <div className="field">
-                    <label>Count (Integer):{this.returnFieldDescription('countValid')}</label>
-                    <input type="text" value={ this.state.count } onChange={ (e) => this.handleCountInput(e) }/>
-                </div>
-                {this.submitButton()}
-            </form>
+                    <div className="field">
+                        <label>Count (Integer):{this.returnFieldDescription('countValid')}</label>
+                        <input type="text" value={ this.state.count } onChange={ (e) => this.handleCountInput(e) }/>
+                    </div>
+                    {this.submitButton()}
+                </form>
     	);
   	}
 }
