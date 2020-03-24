@@ -2,7 +2,11 @@ import React, { Component } from 'react';
 import { graphql } from 'react-apollo';
 
 // queries
-import { getDayOfWeeksQuery, addMedicineMutation } from '../queries/queries'; 
+import { 
+    getDayOfWeeksQuery, 
+    addMedicineMutation, 
+    getMedicinesQuery 
+} from '../queries/queries'; 
 
 var compose = require('lodash/flowRight');
 
@@ -188,7 +192,10 @@ class AddMedicine extends Component {
                 times: this.state.times.split(',').map(term => Number.parseInt(term.trim())),
                 dayNames: Array.from(this.state.days.keys())
             },
-            refetchQueries: [{ query: getDayOfWeeksQuery }]
+            refetchQueries: [
+                { query: getDayOfWeeksQuery },
+                { query: getMedicinesQuery }
+            ]
         });
 
         this.setState({

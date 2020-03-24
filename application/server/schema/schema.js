@@ -15,7 +15,12 @@ const {
 const MedicineType = new GraphQLObjectType({
     name: 'Medicine',
     fields: () => ({
-        id: { type: GraphQLID },
+        id: { 
+            type: GraphQLID,
+            resolve(parent, args) {
+                return parent._id; 
+            } 
+        },
         count: { type: GraphQLInt },
         name: { type: GraphQLString },
         times: { type: GraphQLList(GraphQLInt) },
