@@ -9,7 +9,7 @@ const {
     GraphQLID,
     GraphQLInt,
     GraphQLList,
-    GraphQLNonNull,
+    GraphQLNonNull
 } = graphql;
 
 const MedicineType = new GraphQLObjectType({
