@@ -10,8 +10,10 @@ import ManageMedicine from './components/ManageMedicine';
 
 // apollo client setup 
 const client = new ApolloClient({
-	uri: 'http:localhost:3001/graphql'
+	uri: 'http://127.0.0.1:3001/graphql'
 });
+
+
 
 class App extends Component {
   	render () {
