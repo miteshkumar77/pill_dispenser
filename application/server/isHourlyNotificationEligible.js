@@ -1,7 +1,7 @@
  const db_days = require('./models/dayOfWeek'); 
  const db_meds = require('./models/medicine');
 
-async function isHourlyNotificationEligible() {
+async function hourlyEligibleNotifications() {
     const dayOfWeeks = [
         'Sunday', 'Monday', 'Tuesday', 'Wednesday',
         'Thursday', 'Friday', 'Saturday'
@@ -13,10 +13,22 @@ async function isHourlyNotificationEligible() {
     const medicineIds = (await db_days.findById({ _id: today })).medicineIds;
     const meds_db = await Promise.all(
         medicineIds.map(medicineId => {
-            return db_meds.find({ _id: medicineId });
+            return db_meds.find({ _id: medicineId , times: hour });
         })
     );
+    return meds_db; 
+}
+
+function sendNotification(meds_db) {
     console.log(meds_db);
 }
 
-module.exports = isHourlyNotificationEligible; 
+
+
+
+
+
+module.exports = {
+    hourlyEligibleNotifications,
+    sendNotification
+};
