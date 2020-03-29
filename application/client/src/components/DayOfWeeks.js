@@ -40,6 +40,9 @@ class DayOfWeeks extends Component {
                                                 {times()}
                                             </ul>
                                         </li>
+                                        <li id="dose" key="dose">
+                                            Dose: {medicine.dose}
+                                        </li>
                                     </ul>
                                 </li>
                             );

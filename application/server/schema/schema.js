@@ -22,6 +22,7 @@ const MedicineType = new GraphQLObjectType({
             } 
         },
         count: { type: GraphQLInt },
+        dose: { type: GraphQLInt },
         name: { type: GraphQLString },
         times: { type: GraphQLList(GraphQLInt) },
         days: { 
@@ -40,7 +41,9 @@ const DayOfWeekType = new GraphQLObjectType({
         medications: {
             type: GraphQLList(MedicineType),
             resolve(parent, args) {
-                return Medicine.find({ dayNames: parent._id }); 
+
+                return (parent.medicineIds.map(medicineId => Medicine.findById(medicineId)));
+                // return Medicine.find({ dayNames: parent._id }); 
             }
         }
     })
@@ -92,6 +95,7 @@ const Mutation = new GraphQLObjectType({
             resolve(parent, args) {
                 let dayOfWeek = new DayOfWeek({
                     _id: args.name,
+                    medicineIds: [] 
                 });
                 
                 return dayOfWeek.save(); 
@@ -103,19 +107,25 @@ const Mutation = new GraphQLObjectType({
             args: {
                 name: { type: new GraphQLNonNull(GraphQLString) },
                 count: { type: new GraphQLNonNull(GraphQLInt) },
+                dose: { type: new GraphQLNonNull(GraphQLInt) },
                 times: { type: new GraphQLNonNull(GraphQLList(GraphQLInt))},
                 dayNames: { type: new GraphQLNonNull(GraphQLList(GraphQLString))}
             },
 
-            resolve (parent, args) {
+            async resolve (parent, args) {
                 let medicine = new Medicine({
                     name: args.name,
                     count: args.count,
+                    dose: args.dose,
                     times: args.times,
                     dayNames: args.dayNames
                 }); 
                 
-                return medicine.save(); 
+                await Promise.all(args.dayNames.map(dayName => {
+                    return DayOfWeek.findOneAndUpdate({ _id: dayName }, { $push: { medicineIds: medicine._id }});
+                })).catch((err) => console.error(err)); 
+
+                return await medicine.save(); 
             }
         },
 
@@ -146,23 +156,32 @@ const Mutation = new GraphQLObjectType({
                     console.log('Medicine with this id does not exist. Cannot be modified.');
                     return null; 
                 }
+
             }
         },
 
         deleteMedicine: {
             type: MedicineType,
             args: {
-                id: { type: new GraphQLNonNull(GraphQLID)}
+                id: { type: new GraphQLNonNull(GraphQLID) }
             },
 
             async resolve (parent, args) {
-                try {
-                    let res = await Medicine.findByIdAndDelete(args.id);
-                    return res; 
-                } catch (err) {
-                    console.log('Medicine with this id does not exist. Cannot be deleted');
-                    return null; 
+
+
+
+                const doc = await Medicine.findOneAndRemove({ _id: args.id });
+                if (doc) {
+                    await Promise.all(doc.dayNames.map(async dayName => {
+                        try {
+                            return DayOfWeek.findByIdAndUpdate(dayName, { $pull: { medicineIds: doc._id } });
+                        }
+                        catch (error1) {
+                            return console.error(error1);
+                        }
+                    })).catch((error2) => console.error(error2));
                 }
+                return doc; 
             }
         }
     }

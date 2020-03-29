@@ -45,10 +45,12 @@ class AddMedicine extends Component {
             days: new Map(),
             times: '',
             count: '',
+            dose: '',
             nameValid: false,
             daysValid: false,
             timesValid: false,
-            countValid: false
+            countValid: false,
+            doseValid: false
         };
     }
 
@@ -101,7 +103,8 @@ class AddMedicine extends Component {
             !this.state.countValid ||
             !this.state.daysValid ||
             !this.state.nameValid ||
-            !this.state.timesValid
+            !this.state.timesValid ||
+            !this.state.doseValid
         ) {
             disabled = true;
             marking = (<span>incomplete</span>)
@@ -112,6 +115,12 @@ class AddMedicine extends Component {
         
     }
 
+    handleDoseInput = (e) => {
+        this.setState({
+            dose: e.target.value
+        });
+        this.checkDoseValid(e.target.value);
+    }
     handleNameInput = (e) => {
         this.setState({
             name: e.target.value 
@@ -176,6 +185,17 @@ class AddMedicine extends Component {
         }
     }
 
+    checkDoseValid = (dose) => {
+        if (
+            Number.isNaN(Number.parseInt(dose)) ||
+            Number.parseInt(dose) <= 0
+        ) {
+            this.setState({ doseValid: false });
+        } else {
+            this.setState({ doseValid: true });
+        }
+    }
+
     returnFieldDescription = (field) => {
         return this.state[field]?
         (<h5 id="accepted-mark">Accepted field</h5>):
@@ -189,6 +209,7 @@ class AddMedicine extends Component {
             variables: {
                 name: this.state.name,
                 count: Number.parseInt(this.state.count),
+                dose: Number.parseInt(this.state.dose),
                 times: this.state.times.split(',').map(term => Number.parseInt(term.trim())),
                 dayNames: Array.from(this.state.days.keys())
             },
@@ -206,7 +227,8 @@ class AddMedicine extends Component {
             nameValid: false,
             daysValid: false,
             timesValid: false,
-            countValid: false
+            countValid: false,
+            doseValid: false
         });
     }
 
@@ -228,6 +250,15 @@ class AddMedicine extends Component {
                         </ul>
                     </div>
 
+                    <div className="field">
+                        
+                        <label>
+                            Dose (Integer):
+                            {this.returnFieldDescription('doseValid')}
+                            <input type="text" value={ this.state.dose } onChange={ (e) => this.handleDoseInput(e) }/>
+                        </label>
+
+                    </div>
                     <div className="field">
                         <label>
                             Times (Integers, comma separated):{this.returnFieldDescription('timesValid')}
