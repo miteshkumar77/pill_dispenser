@@ -6,7 +6,10 @@ const cors = require('cors');
 const webpush = require('web-push');
 const {
     hourlyEligibleNotifications,
-    sendNotification
+    sendNotification,
+    configureNotification,
+    executeFuncEveryMinute,
+    executeFuncEveryHour
 } = require('./isHourlyNotificationEligible'); 
 let user_sub; 
 
@@ -82,12 +85,15 @@ const uri = 'mongodb+srv://miteshDB:hMsibDp5BPwRAgQ0@gqlmitesh-ic1rs.mongodb.net
         console.log('now listening for requests on port 3001'); 
     });
     
-    hourlyEligibleNotifications()
-    .then((result) => sendNotification(result))
-    .catch((error) => console.log(error)); 
-    
-    // sendNotificationEveryHour(await hourlyEligibleNotifications());  
-    // mongoose.set('debug', true);  
+    executeFuncEveryMinute(() => {
+        hourlyEligibleNotifications()
+        .then((result) => configureNotification(result))
+        .catch((error) => console.log(error));
+    }); 
+
+    // hourlyEligibleNotifications()
+    //     .then((result) => configureNotification(result))
+    //     .catch((error) => console.log(error));
 
 }
 
