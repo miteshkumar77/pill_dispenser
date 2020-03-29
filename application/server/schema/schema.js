@@ -43,7 +43,7 @@ const DayOfWeekType = new GraphQLObjectType({
             resolve(parent, args) {
 
                 return (parent.medicineIds.map(medicineId => Medicine.findById(medicineId)));
-                // return Medicine.find({ dayNames: parent._id }); 
+                
             }
         }
     })

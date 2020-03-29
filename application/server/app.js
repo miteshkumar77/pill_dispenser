@@ -4,7 +4,10 @@ const schema = require('./schema/schema');
 const mongoose = require('mongoose'); 
 const cors = require('cors'); 
 const webpush = require('web-push');
-const isHourlyNotificationEligible = require('./isHourlyNotificationEligible'); 
+const {
+    hourlyEligibleNotifications,
+    sendNotification
+} = require('./isHourlyNotificationEligible'); 
 let user_sub; 
 
 const publicVapidKey = 'BDvQD1LxhycVHPPbmBD3BE2L7b7LE3VE9XO-o6NmCjs1D1XqKb6vCczdE671TvQlkLe2eupqXSbxO1bksiajfEE';
@@ -20,7 +23,7 @@ function saveSubscriptionToDatabase(subscription) {
 
 const server = async() => {
 // cluster uri
-const uri = 'mongodb+srv://miteshDB:0005MKak01@gqlmitesh-ic1rs.mongodb.net/test?retryWrites=true&w=majority';
+const uri = 'mongodb+srv://miteshDB:hMsibDp5BPwRAgQ0@gqlmitesh-ic1rs.mongodb.net/test?retryWrites=true&w=majority';
 
     const app = express(); 
 
@@ -79,8 +82,11 @@ const uri = 'mongodb+srv://miteshDB:0005MKak01@gqlmitesh-ic1rs.mongodb.net/test?
         console.log('now listening for requests on port 3001'); 
     });
     
+    hourlyEligibleNotifications()
+    .then((result) => sendNotification(result))
+    .catch((error) => console.log(error)); 
     
-    isHourlyNotificationEligible(mongoose); 
+    // sendNotificationEveryHour(await hourlyEligibleNotifications());  
     // mongoose.set('debug', true);  
 
 }

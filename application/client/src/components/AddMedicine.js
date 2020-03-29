@@ -224,6 +224,7 @@ class AddMedicine extends Component {
             days: new Map(),
             times: '',
             count: '',
+            dose: '',
             nameValid: false,
             daysValid: false,
             timesValid: false,
