@@ -18,8 +18,8 @@ const MedicineWidget = (props) => {
         return (
             <li>
                 <label>
-                    {props.value.name}
-                    :
+                    {props.value.name}:
+                    Dose: {props.value.dose} -----
                     {props.value.days.map(day => day._id).join(', ')}
                     <button
                         disabled={false}

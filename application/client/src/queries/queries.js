@@ -7,7 +7,8 @@ const getDayOfWeeksQuery = gql`
             medications {
                 name,
                 count,
-                times
+                times,
+                dose
             }
         }
     }
@@ -18,6 +19,7 @@ const getMedicinesQuery = gql`
         medicines{
             id,
             count,
+            dose,
             name,
             times,
             days {
@@ -28,10 +30,11 @@ const getMedicinesQuery = gql`
 `
 
 const addMedicineMutation = gql`
-    mutation ($name: String!, $count: Int!, $times: [Int!]!, $dayNames: [String!]!) {
-        addNewMedicine(name: $name, count: $count, times: $times, dayNames: $dayNames) {
+    mutation ($name: String!, $count: Int!, $dose: Int!, $times: [Int!]!, $dayNames: [String!]!) {
+        addNewMedicine(name: $name, count: $count, dose: $dose, times: $times, dayNames: $dayNames) {
             name,
-            count
+            count,
+            dose
         }
     }
 `
