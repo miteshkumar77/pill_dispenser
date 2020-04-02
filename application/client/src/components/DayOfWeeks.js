@@ -14,7 +14,6 @@ class DayOfWeeks extends Component {
                     <ul id="meds-list">
                         {medicines.map((medicine) => {
 
-
                             let times = () => {
                                 return medicine.times.map((time) => {
                                     let c_time = time.toString().concat(":00"); 
