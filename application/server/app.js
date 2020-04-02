@@ -3,24 +3,15 @@ const graphqlHTTP = require('express-graphql');
 const schema = require('./schema/schema'); 
 const mongoose = require('mongoose'); 
 const cors = require('cors'); 
+const bodyParser = require('body-parser');
+const path = require('path');
 const webpush = require('web-push');
 const {
     hourlyEligibleNotifications,
-    sendNotification,
     configureNotification,
-    executeFuncEveryMinute,
+    // executeFuncEveryMinute,
     executeFuncEveryHour
 } = require('./isHourlyNotificationEligible'); 
-let user_sub; 
-
-const publicVapidKey = 'BDvQD1LxhycVHPPbmBD3BE2L7b7LE3VE9XO-o6NmCjs1D1XqKb6vCczdE671TvQlkLe2eupqXSbxO1bksiajfEE';
-const privateVapidKey = 'no9V0V8YHXi5Z4khAJOTBBCGTG9LGL_CbEY0qOZ4Zvg';
-
-webpush.setVapidDetails('mailto:miteshkumarca@gmail.com', publicVapidKey, privateVapidKey);
-
-function saveSubscriptionToDatabase(subscription) {
-    user_sub = subscription; 
-}
 
 
 
@@ -30,42 +21,10 @@ const uri = 'mongodb+srv://miteshDB:hMsibDp5BPwRAgQ0@gqlmitesh-ic1rs.mongodb.net
 
     const app = express(); 
 
+
     // allow cross-origin requests
     app.use(cors()); 
-    app.use(require('body-parser').json());
-    app.post('/subscribe', (req, res) => {
-        const isValidSaveRequest = (req, res) => {
-            if (!req.body || !req.body.endpoint) {
-                res.status(400); 
-                res.setHeader('Content-Type', 'application/json');
-                res.send(JSON.stringify({
-                    error: {
-                        id: 'no-endpoint',
-                        message: 'Subscription must have an endpoint.'
-                    }
-                }));
-                return false; 
-            }
-            return true; 
-        }; 
-        
-        return saveSubscriptionToDatabase(req.body)
-        .then(function(subscriptionID) {
-            res.setHeader('Content-Type', 'application/json');
-            res.send(JSON.stringify({ data: { success: true }}));
-        })
-        .catch(function(err) {
-            res.status(500);
-            res.setHeader('Content-Type', 'application/json');
-            res.send(JSON.stringify({
-                error: {
-                    id: 'unable-to-save-subscription',
-                    message: 'The subscription was received but we were unable to save it to our database.'
-                }
-            }));
-        });
-    });
-
+    
     mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }); 
     mongoose.connection.once('open', () => {
         console.log('connected to database');
@@ -85,15 +44,37 @@ const uri = 'mongodb+srv://miteshDB:hMsibDp5BPwRAgQ0@gqlmitesh-ic1rs.mongodb.net
         console.log('now listening for requests on port 3001'); 
     });
     
-    executeFuncEveryMinute(() => {
+    executeFuncEveryHour(() => {
         hourlyEligibleNotifications()
         .then((result) => configureNotification(result))
         .catch((error) => console.log(error));
     }); 
 
-    // hourlyEligibleNotifications()
-    //     .then((result) => configureNotification(result))
-    //     .catch((error) => console.log(error));
+
+    console.log(__dirname + '/');
+    app.use(express.static(path.join(__dirname + 'client')));
+    app.use(bodyParser.json());
+
+
+    const publicVapidKey = 'BNbKwE3NUkGtPWeTDSu0w5yMtR86xz20BcsU_FUvSNlBS44xS0alcwGwIh9JYn9uwc98LoVO7kW08gMjKgFthh4';
+    const privateVapidKey = 'HICs69hPyBzMl_cTDUecB-rEWy0012R8EfvA9xygsRE';
+
+    webpush.setVapidDetails('mailto:test@test.com', publicVapidKey, privateVapidKey);
+
+    app.post('/subscribe', (req, res) => {
+        // Get pushSubscription Object
+        const subscription = req.body; 
+
+        // Send 201 - resource created successfully 
+        res.status(201).json({}); 
+
+        // Create payload
+        const payload = Json.stringify({ title: 'Push Test' });
+
+        // Pass object into sendNotification
+        webpush.sendNotification(subscription, payload).catch(err => console.error(err)); 
+    });
+
 
 }
 
