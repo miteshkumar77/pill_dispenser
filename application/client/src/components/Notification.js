@@ -7,51 +7,56 @@ class Notification extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            publicVapidKey: this.props.pubKey
+            publicVapidKey: this.props.pubKey,
+            backEndUri: this.props.uri
         }
     }
 
 
-    registerServiceWorker = () => {
-        console.log('Registering Service Worker...');
-        const path = require('path');
-        const url = require('url');
-        let swScope = path.join(__dirname, '/');
-        let swPath = url.format({
-            pathname: path.join(__dirname, 'public/worker.js'),
-            protocol: 'localhost:3000',
-            slashes: false
-        });
-
-        console.log(swScope, swPath);
-        return navigator.serviceWorker.register(`${swPath}`, { scope: `${swScope}` })
-            .then((registration) => {
-                console.error('Registration successful, scope is:', registration.scope);
-            })
-            .catch((error) => {
-                console.error('Service worker registration failed, error:', error);
-            });
-
-
-        // navigator.serviceWorker.register('/public/sw.js')
-        // .then((registration) => {
-        //     console.log('Service Worker successfully registered: ', registration);
-        //     return registration;
-        // })
-        // .catch((err) => {
-        //     console.error('Unable to register service worker.', err);
-        // });
-    }
+    
 
     componentDidMount() {
-        if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
-            console.warn('Notifications not availible in this browser.');
-            return;
+        if ('serviceWorker' in navigator && 'PushManager' in window) {
+            const backEndUri = this.state.backEndUri; 
+            console.log('Registering Service Worker...');
+            navigator.serviceWorker.register('worker.js')
+            .then((registration) => {
+                console.log('Service Worker Registered.');
+                console.log('Registering pushManager...');
+                return registration.pushManager.getSubscription()
+                .then(async (subscription) => {
+                    console.log('pushManager Registered.');
+                    if (subscription) {
+                        console.log('Subscription already exists: ',subscription); 
+                        return subscription;
+                    }
+
+                    console.log('Awaiting Key...', backEndUri + '/vapidPublicKey');
+                    const response = await fetch(backEndUri + '/vapidPublicKey'); 
+                    const vapidPublicKey = await response.text(); 
+
+                    console.log('key: ',vapidPublicKey); 
+                    const convertedVapidKey = urlB64ToUint8Array(vapidPublicKey);
+
+                    return registration.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: convertedVapidKey
+                    });
+                });
+            }).then((subscription) => {
+                fetch(backEndUri + '/register', {
+                    method: 'post',
+                    headers: {
+                        'Content-type': 'application/json'
+                    }, 
+                    body: JSON.stringify({
+                        subscription: subscription
+                    })
+                });
+            })
+            .catch( err => console.error('Error registering service worker: ', err));
         }
-        console.log('Notifications available!');
-        const registration = this.registerServiceWorker();
-
-
+        
     }
 
     render() {

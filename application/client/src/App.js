@@ -9,9 +9,11 @@ import AddMedicine from './components/AddMedicine';
 import ManageMedicine from './components/ManageMedicine';
 import Notification from './components/Notification'; 
 
+
+const backEndUri = 'http://127.0.0.1:3001'
 // apollo client setup 
 const client = new ApolloClient({
-	uri: 'http://127.0.0.1:3001/graphql'
+	uri: backEndUri + '/graphql'
 });
 
 const pubKey = 'BNbKwE3NUkGtPWeTDSu0w5yMtR86xz20BcsU_FUvSNlBS44xS0alcwGwIh9JYn9uwc98LoVO7kW08gMjKgFthh4';
@@ -27,7 +29,7 @@ class App extends Component {
                     <DayOfWeeks/>
 					<ManageMedicine/>
 					<AddMedicine/>
-					<Notification pubKey={pubKey}/>
+					<Notification pubKey={pubKey} uri={backEndUri} />
 				</div>
 			</ApolloProvider>
 			
