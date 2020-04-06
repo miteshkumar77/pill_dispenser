@@ -9,21 +9,28 @@ const webpush = require('web-push');
 const {
     hourlyEligibleNotifications,
     configureNotification,
-    // executeFuncEveryMinute,
+    executeFuncEveryMinute,
     executeFuncEveryHour
 } = require('./isHourlyNotificationEligible'); 
 
+
+let registrations = []; 
+const publicVapidKey = 'BNbKwE3NUkGtPWeTDSu0w5yMtR86xz20BcsU_FUvSNlBS44xS0alcwGwIh9JYn9uwc98LoVO7kW08gMjKgFthh4';
+const privateVapidKey = 'HICs69hPyBzMl_cTDUecB-rEWy0012R8EfvA9xygsRE';
 
 
 const server = async() => {
 // cluster uri
 const uri = 'mongodb+srv://miteshDB:hMsibDp5BPwRAgQ0@gqlmitesh-ic1rs.mongodb.net/test?retryWrites=true&w=majority';
 
+    
     const app = express(); 
-
+    app.use(bodyParser.json()); 
+    app.use(cors());
+    
 
     // allow cross-origin requests
-    app.use(cors()); 
+     
     
     mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true }); 
     mongoose.connection.once('open', () => {
@@ -44,38 +51,35 @@ const uri = 'mongodb+srv://miteshDB:hMsibDp5BPwRAgQ0@gqlmitesh-ic1rs.mongodb.net
         console.log('now listening for requests on port 3001'); 
     });
     
+    
+
+    
+    webpush.setVapidDetails(
+        'mailto:miteshkumarca@gmail.com',
+        publicVapidKey,
+        privateVapidKey
+    ); 
+    
+
+
+
+    app.get('/vapidPublicKey', (req, res) => {
+        res.send(publicVapidKey); 
+    })
+
+    app.post('/register', (req, res) => {
+        // Get pushSubscription object
+        registrations.push(req.body.subscription); 
+        // Send 201 - resource created
+        res.status(201).json({});
+    })
+
     executeFuncEveryHour(() => {
         hourlyEligibleNotifications()
-        .then((result) => configureNotification(result))
+        .then((result) => configureNotification(result, registrations))
         .catch((error) => console.log(error));
     }); 
-
-
-    console.log(__dirname + '/');
-    app.use(express.static(path.join(__dirname + 'client')));
-    app.use(bodyParser.json());
-
-
-    const publicVapidKey = 'BNbKwE3NUkGtPWeTDSu0w5yMtR86xz20BcsU_FUvSNlBS44xS0alcwGwIh9JYn9uwc98LoVO7kW08gMjKgFthh4';
-    const privateVapidKey = 'HICs69hPyBzMl_cTDUecB-rEWy0012R8EfvA9xygsRE';
-
-    webpush.setVapidDetails('mailto:test@test.com', publicVapidKey, privateVapidKey);
-
-    app.post('/subscribe', (req, res) => {
-        // Get pushSubscription Object
-        const subscription = req.body; 
-
-        // Send 201 - resource created successfully 
-        res.status(201).json({}); 
-
-        // Create payload
-        const payload = Json.stringify({ title: 'Push Test' });
-
-        // Pass object into sendNotification
-        webpush.sendNotification(subscription, payload).catch(err => console.error(err)); 
-    });
-
-
+    
 }
 
 server(); 

@@ -1,4 +1,4 @@
-@font-face {
+ @font-face {
   font-family: Nunito-SemiBold;
   src: url(./fonts/Nunito-SemiBold.ttf);
 }
@@ -6,3 +6,29 @@ body {
   background: #eee; 
   font-family: Nunito-SemiBold;
 }
+  .invalid {
+	  color: #eb3453;
+  }
+
+  .valid {
+	  color: #34eb59;
+  }
+
+  hr {
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+	border: 0;
+	border-top: 10px solid rgba(41, 8, 226, 0.1);
+  }
+
+  .Component {
+	  margin-top: 2rem;
+	  margin-bottom: 2rem;
+	  margin-left: 20%;
+	  border: 0;
+  }
+  
+  .day-cards {
+	  margin-top: 1rem;
+	  
+  }

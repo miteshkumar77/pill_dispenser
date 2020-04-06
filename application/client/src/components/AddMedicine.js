@@ -1,5 +1,6 @@
 import React, { Component } from 'react'; 
 import { graphql } from 'react-apollo';
+import { Button, Form } from 'react-bootstrap'; 
 
 // queries
 import { 
@@ -11,30 +12,35 @@ import {
 var compose = require('lodash/flowRight');
 
 
-const Checkbox = (props) => {
+const OwnCheckbox = (props) => {
     
     if (props.disabled) {
         return (
-            <label>
-                {props.name}
-                <input type="checkbox" disabled={true}/>
-            </label>
+
+            <div key="default-checkbox" className="mb-3">
+                <Form.Check
+                    type="checkbox"
+                    id="default-checkbox"
+                    label="disabled"
+                    disabled={true}
+                />
+            </div>
         );
     } else {
         return (
-            <label>
-                {props.name}
-                <input 
-                    type="checkbox" 
-                    disabled={false} 
+
+            <div key={ props.name } className="mb-3">
+                <Form.Check
+                    type="checkbox"
+                    id={ props.name }
+                    label={ props.name }
                     onChange={ props.onChange }
                     checked={ props.checked }
                 />
-            </label>
+            </div>
         );
     }
 }
-
 
 class AddMedicine extends Component {
     
@@ -72,7 +78,7 @@ class AddMedicine extends Component {
         if (data.loading) {
             return (
                 <li>
-                    <Checkbox name="Loading..." disabled={ true } />
+                    <OwnCheckbox name="Loading..." disabled={ true } />
                 </li>
             );
         } else {
@@ -80,14 +86,14 @@ class AddMedicine extends Component {
                 this.props.getDayOfWeeksQuery.dayOfWeeks.map((dayObj) => {
                     const dayName = dayObj._id; 
                     return (
-                        <li key={dayName}>
-                            <Checkbox 
+                        <div key={dayName}>
+                            <OwnCheckbox 
                                 name={dayName}
                                 disabled={false}
                                 onChange={ () => this.handleDaysInput(dayName) }
                                 checked={ this.state.days.has(dayName) }
                             />
-                        </li>
+                        </div>
                     );
                 })
             );
@@ -110,7 +116,15 @@ class AddMedicine extends Component {
             marking = (<span>incomplete</span>)
         }
 
-        return (<button disabled={disabled}>{marking}</button>)
+        // return (<button  disabled={disabled}>{marking}</button>)
+        return (
+            <Button 
+                variant="primary" 
+                disabled={disabled}
+                type="submit"
+            > 
+                {marking}
+            </Button>); 
 
         
     }
@@ -197,9 +211,10 @@ class AddMedicine extends Component {
     }
 
     returnFieldDescription = (field) => {
+
         return this.state[field]?
-        (<h5 id="accepted-mark">Accepted field</h5>):
-        (<h5 id="invalid-mark">Invalid field</h5>);
+        (<Form.Text className="text-muted, valid">Accepted field</Form.Text>):
+        (<Form.Text className="text-muted, invalid">Invalid field</Form.Text>);
 
     }
 
@@ -210,7 +225,7 @@ class AddMedicine extends Component {
                 name: this.state.name,
                 count: Number.parseInt(this.state.count),
                 dose: Number.parseInt(this.state.dose),
-                times: this.state.times.split(',').map(term => Number.parseInt(term.trim())),
+                times: [...(new Set(this.state.times.split(',').map(term => Number.parseInt(term.trim()))))],
                 dayNames: Array.from(this.state.days.keys())
             },
             refetchQueries: [
@@ -237,40 +252,78 @@ class AddMedicine extends Component {
   	render () { 
     
     	return (
-                <form id="add-medicine" onSubmit={ (e) => this.submitForm(e) }>
-                    <div className="field">
-                        <label>Medicine name: {this.returnFieldDescription('nameValid')} </label>
-                        <input type="text" value={this.state.name} onChange={(e) => this.handleNameInput(e)}/>
-                        
+                <form className="medForm" id="add-medicine" onSubmit={ (e) => this.submitForm(e) }>
+                    
+                    <div className="field-name">
+                        <Form.Group controlId="name-Input">
+                            <Form.Label>Medicine name</Form.Label>
+                            <Form.Control
+                                style={{ width: "30rem" }}
+                                type="text"
+                                placeholder="Enter medicine name"
+                                value={this.state.name}
+                                onChange={(e) => this.handleNameInput(e)} 
+                            />
+                            
+                            {this.returnFieldDescription('nameValid')}
+                            
+                        </Form.Group>
                     </div>
 
                     <div className="field">
                         <label>Days: {this.returnFieldDescription('daysValid')}</label>
-                        <ul>
-                            {this.displayDays()}
-                        </ul>
+                        
+                        {this.displayDays()}
+                        
                     </div>
 
-                    <div className="field">
+                    <div className="field-dose">
                         
-                        <label>
-                            Dose (Integer):
+                        <Form.Group controlId="dose-Input">
+                            <Form.Label>Dose (Number)</Form.Label>
+                            <Form.Control 
+                                style={{ width: "30rem" }}
+                                type="text"
+                                placeholder="Enter Dose Count"
+                                value={this.state.dose}
+                                onChange={(e) => this.handleDoseInput(e)} 
+                            />
+                            
                             {this.returnFieldDescription('doseValid')}
-                            <input type="text" value={ this.state.dose } onChange={ (e) => this.handleDoseInput(e) }/>
-                        </label>
+                            
+                        </Form.Group>
 
                     </div>
-                    <div className="field">
-                        <label>
-                            Times (Integers, comma separated):{this.returnFieldDescription('timesValid')}
-                            <input type="text" value={ this.state.times } onChange={ (e) => this.handleTimesInput(e) }/>
-                        </label>
+                    <div className="field-times">
+                        <Form.Group controlId="times-Input">
+                            <Form.Label>Times (e.g. 10, 15 means 10:00, 15:00)</Form.Label>
+                            <Form.Control 
+                                style={{ width: "30rem" }}
+                                type="text"
+                                placeholder="Enter Times"
+                                value={this.state.times}
+                                onChange={(e) => this.handleTimesInput(e)} 
+                            />
+                            
+                            {this.returnFieldDescription('timesValid')}
+                            
+                        </Form.Group>
                         
                     </div>
 
-                    <div className="field">
-                        <label>Count (Integer):{this.returnFieldDescription('countValid')}</label>
-                        <input type="text" value={ this.state.count } onChange={ (e) => this.handleCountInput(e) }/>
+                    <div className="field-count">
+
+                        <Form.Group controlId="count-Input">
+                            <Form.Label>Count (Number)</Form.Label>
+                            <Form.Control 
+                                style={{ width: "30rem" }}
+                                type="text"
+                                placeholder="Enter medicine count"
+                                value={this.state.count}
+                                onChange={(e) => this.handleCountInput(e)} 
+                            />
+                            {this.returnFieldDescription('countValid')}
+                        </Form.Group>
                     </div>
                     {this.submitButton()}
                 </form>
