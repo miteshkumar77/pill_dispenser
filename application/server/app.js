@@ -74,24 +74,12 @@ const uri = 'mongodb+srv://miteshDB:hMsibDp5BPwRAgQ0@gqlmitesh-ic1rs.mongodb.net
         res.status(201).json({});
     })
 
-    executeFuncEveryMinute(() => {
+    executeFuncEveryHour(() => {
         hourlyEligibleNotifications()
-        .then((result) => configureNotification(result))
-        .then(() => {
-            return Promise.all(registrations.map(registration => {
-                return webpush.sendNotification(registration, JSON.stringify({title: "Medications Due, check app"})); 
-            }));
-        })
+        .then((result) => configureNotification(result, registrations))
         .catch((error) => console.log(error));
     }); 
-    // // Create payload
-    // const payload = JSON.stringify({ title: 'Push Test' });
-
-    // // Pass object into sendNotification
-    // webpush.sendNotification(registrations[0], payload)
-    // .catch(err => console.error(err)); 
-
-
+    
 }
 
 server(); 

@@ -1,7 +1,6 @@
 import React, { Component } from 'react'; 
 import ApolloClient from 'apollo-boost'; 
 import { ApolloProvider } from 'react-apollo';
-
 // components
 
 import DayOfWeeks from './components/DayOfWeeks';
@@ -24,11 +23,14 @@ class App extends Component {
   	render () {
     	return (
 			<ApolloProvider client={client}>
-				<div id="main">
+				<div className="main">
 					<h1>Medication Reminders:</h1>
-                    <DayOfWeeks/>
-					<ManageMedicine/>
-					<AddMedicine/>
+					<hr/>
+					<div className="Component"> <DayOfWeeks /> </div>
+					<hr/>
+					<div className="Component"><ManageMedicine /></div>
+					<hr/>
+					<div className="Component"><AddMedicine /></div>
 					<Notification pubKey={pubKey} uri={backEndUri} />
 				</div>
 			</ApolloProvider>

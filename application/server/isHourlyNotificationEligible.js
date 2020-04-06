@@ -1,5 +1,6 @@
  const db_days = require('./models/dayOfWeek'); 
  const db_meds = require('./models/medicine');
+ const webpush = require('web-push');
 
 async function hourlyEligibleNotifications() {
     const dayOfWeeks = [
@@ -20,12 +21,20 @@ async function hourlyEligibleNotifications() {
     return meds_db; 
 }
 
-function sendNotification(meds_db) {
-    console.log(meds_db);
+async function sendNotification(registrations) {
+    console.log(registrations); 
+    try {
+        return Promise.all(registrations.map(registration => {
+            return webpush.sendNotification(registration, JSON.stringify({ title: "Medications Due, check app" }));
+        }));
+    }
+    catch (err) {
+        return console.error(err);
+    }
     
 }
 
-async function configureNotification(meds_db) {
+async function configureNotification(meds_db, registrations) {
 
     
     const filtered = meds_db.filter(item => item.length != 0); 
@@ -54,6 +63,8 @@ async function configureNotification(meds_db) {
                 ).catch((err) => console.error(err));
             }
         })
+
+        await sendNotification(registrations); 
         
     }
 }
