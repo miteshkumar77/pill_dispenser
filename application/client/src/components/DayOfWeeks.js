@@ -159,7 +159,7 @@ class DayOfWeeks extends Component {
             return data.dayOfWeeks.map((dayOfWeek) => {
                 return (
 
-                    <div className="loading-days" key={dayOfWeek._id}>
+                    <div className="day-cards" key={dayOfWeek._id}>
                         <DayOfWeekCard value={dayOfWeek}/>
                     </div>
                     // <section className="day-of-week" key={dayOfWeek._id}>

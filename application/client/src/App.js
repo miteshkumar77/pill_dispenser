@@ -25,7 +25,6 @@ class App extends Component {
 			<ApolloProvider client={client}>
 				<div className="main">
 					<h1>Medication Reminders:</h1>
-					<hr/>
 					<div className="Component"> <DayOfWeeks /> </div>
 					<hr/>
 					<div className="Component"><ManageMedicine /></div>

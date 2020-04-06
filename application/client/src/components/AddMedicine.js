@@ -257,7 +257,8 @@ class AddMedicine extends Component {
                     <div className="field-name">
                         <Form.Group controlId="name-Input">
                             <Form.Label>Medicine name</Form.Label>
-                            <Form.Control 
+                            <Form.Control
+                                style={{ width: "30rem" }}
                                 type="text"
                                 placeholder="Enter medicine name"
                                 value={this.state.name}
@@ -281,6 +282,7 @@ class AddMedicine extends Component {
                         <Form.Group controlId="dose-Input">
                             <Form.Label>Dose (Number)</Form.Label>
                             <Form.Control 
+                                style={{ width: "30rem" }}
                                 type="text"
                                 placeholder="Enter Dose Count"
                                 value={this.state.dose}
@@ -296,6 +298,7 @@ class AddMedicine extends Component {
                         <Form.Group controlId="times-Input">
                             <Form.Label>Times (e.g. 10, 15 means 10:00, 15:00)</Form.Label>
                             <Form.Control 
+                                style={{ width: "30rem" }}
                                 type="text"
                                 placeholder="Enter Times"
                                 value={this.state.times}
@@ -313,6 +316,7 @@ class AddMedicine extends Component {
                         <Form.Group controlId="count-Input">
                             <Form.Label>Count (Number)</Form.Label>
                             <Form.Control 
+                                style={{ width: "30rem" }}
                                 type="text"
                                 placeholder="Enter medicine count"
                                 value={this.state.count}
