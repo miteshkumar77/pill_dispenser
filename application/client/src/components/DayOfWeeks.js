@@ -3,7 +3,7 @@ import { graphql } from 'react-apollo';
 
 // queries
 import { getDayOfWeeksQuery } from '../queries/queries'; 
-import { Card, Form, ListGroup } from 'react-bootstrap';
+import { Card, CardGroup, Form, ListGroup } from 'react-bootstrap';
 
 
 const DayOfWeekCard = (props) => {
@@ -57,9 +57,11 @@ const DayOfWeekCard = (props) => {
     }
     if (props.disabled) {
         return (
-            <ListGroup.Item>
-                {props.value}
-            </ListGroup.Item>
+            <Card border="danger">
+                <Card.Header>
+                    {props.value}
+                </Card.Header>
+            </Card>
         );
     } else {
 
@@ -68,12 +70,12 @@ const DayOfWeekCard = (props) => {
     
         return (
             
-            <Card border={(today===props.value._id)?"primary":false} style={{ width: '18rem' }}>
+            <Card className="indiv-day" border={(today===props.value._id)?"success":false} style={{ width: '15rem' }}>
                 <Card.Header>{props.value._id}</Card.Header>
                 <Card.Body>
                     {   
-                    list_med_info()
-                }
+                        list_med_info()
+                    }
                 </Card.Body>
             </Card>
         );        
@@ -159,9 +161,9 @@ class DayOfWeeks extends Component {
             return data.dayOfWeeks.map((dayOfWeek) => {
                 return (
 
-                    <div className="day-cards" key={dayOfWeek._id}>
+                    
                         <DayOfWeekCard value={dayOfWeek}/>
-                    </div>
+                    
                     // <section className="day-of-week" key={dayOfWeek._id}>
                     //     {this.displayDayOfWeek(dayOfWeek)}
                     // </section>
@@ -172,7 +174,9 @@ class DayOfWeeks extends Component {
   	render () {    
     	return (
             <div>
-                {this.displayDayOfWeeks()}
+                <ListGroup className="day-cards">
+                    {this.displayDayOfWeeks()}
+                </ListGroup>
             </div>
     	);
   	}

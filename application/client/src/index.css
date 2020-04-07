@@ -3,15 +3,15 @@
   src: url(./fonts/Nunito-SemiBold.ttf);
 }
 body {
-  background: #eee; 
+  background: rgb(243, 243, 243); 
   font-family: Nunito-SemiBold;
 }
   .invalid {
-	  color: #eb3453;
+	  color: #f01414;
   }
 
   .valid {
-	  color: #34eb59;
+	  color: #09bd2d;
   }
 
   hr {
@@ -22,13 +22,30 @@ body {
   }
 
   .Component {
-	  margin-top: 2rem;
-	  margin-bottom: 2rem;
-	  margin-left: 20%;
+	  margin-top: 1rem;
+	  margin-bottom: 1rem;
+	  margin-left: 1rem;
 	  border: 0;
   }
   
-  .day-cards {
-	  margin-top: 1rem;
-	  
+  .indiv-day {
+    margin-top: 1rem;
   }
+  /* .day-cards {
+	  margin-top: 1rem;
+  } */
+
+  h1 {
+    margin-left: 30%;
+    margin-right: 30%;
+    margin-top: 2rem;
+  }
+
+.Content {
+  margin-left: 4%;
+}
+
+.check-horizontal {
+  margin-left: 1rem;
+  margin-right: 1rem;
+}

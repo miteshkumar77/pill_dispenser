@@ -1,10 +1,12 @@
 import React, { Component } from 'react'; 
 import ApolloClient from 'apollo-boost'; 
 import { ApolloProvider } from 'react-apollo';
+import { ListGroup, ListGroupItem } from 'react-bootstrap';
 // components
 
 import DayOfWeeks from './components/DayOfWeeks';
-import AddMedicine from './components/AddMedicine';
+import PopupForm from './components/PopupForm'; 
+// import AddMedicine from './components/AddMedicine';
 import ManageMedicine from './components/ManageMedicine';
 import Notification from './components/Notification'; 
 
@@ -24,12 +26,18 @@ class App extends Component {
     	return (
 			<ApolloProvider client={client}>
 				<div className="main">
-					<h1>Medication Reminders:</h1>
-					<div className="Component"> <DayOfWeeks /> </div>
-					<hr/>
-					<div className="Component"><ManageMedicine /></div>
-					<hr/>
-					<div className="Component"><AddMedicine /></div>
+					<h1 className="Header">Medication Reminders:</h1>
+					
+					<ListGroup className="Content" horizontal flush>
+						<ListGroupItem>
+							<div className="Component"><DayOfWeeks /> </div>
+						</ListGroupItem>
+						<ListGroupItem>
+							<div className="Component"><ManageMedicine /></div>
+							<div className="Component"><PopupForm /></div>
+						</ListGroupItem>
+					</ListGroup>
+	
 					<Notification pubKey={pubKey} uri={backEndUri} />
 				</div>
 			</ApolloProvider>

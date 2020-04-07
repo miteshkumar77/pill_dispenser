@@ -74,7 +74,7 @@ const uri = 'mongodb+srv://miteshDB:hMsibDp5BPwRAgQ0@gqlmitesh-ic1rs.mongodb.net
         res.status(201).json({});
     })
 
-    executeFuncEveryHour(() => {
+    executeFuncEveryMinute(() => {
         hourlyEligibleNotifications()
         .then((result) => configureNotification(result, registrations))
         .catch((error) => console.log(error));
