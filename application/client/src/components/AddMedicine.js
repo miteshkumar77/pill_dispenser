@@ -1,6 +1,8 @@
+
 import React, { Component } from 'react'; 
 import { graphql } from 'react-apollo';
-import { Button, Form } from 'react-bootstrap'; 
+import { Button, Form, Card, ListGroup } from 'react-bootstrap'; 
+import Popup from 'reactjs-popup';
 
 // queries
 import { 
@@ -19,6 +21,7 @@ const OwnCheckbox = (props) => {
 
             <div key="default-checkbox" className="mb-3">
                 <Form.Check
+                    className="check-horizontal"
                     type="checkbox"
                     id="default-checkbox"
                     label="disabled"
@@ -27,16 +30,32 @@ const OwnCheckbox = (props) => {
             </div>
         );
     } else {
+        const lookup = {
+            Monday: 'M',
+            Tuesday: 'T',
+            Wednesday: 'W',
+            Thursday: 'R',
+            Friday: 'F',
+            Saturday: 'S',
+            Sunday: 'U'
+        }
         return (
 
             <div key={ props.name } className="mb-3">
-                <Form.Check
-                    type="checkbox"
-                    id={ props.name }
-                    label={ props.name }
-                    onChange={ props.onChange }
-                    checked={ props.checked }
-                />
+                <Popup on="hover" trigger={
+                    
+                    <Form.Check
+                        className="check-horizontal"
+                        type="checkbox"
+                        id={ props.name }
+                        label={ lookup[props.name] }
+                        onChange={ props.onChange }
+                        checked={ props.checked }
+                    />
+                    
+                }>    
+                    <span>{ props.name }</span>
+                </Popup>
             </div>
         );
     }
@@ -255,7 +274,7 @@ class AddMedicine extends Component {
                 <form className="medForm" id="add-medicine" onSubmit={ (e) => this.submitForm(e) }>
                     
                     <div className="field-name">
-                        <Form.Group controlId="name-Input">
+                        <Form.Group controlId="formText-Input">
                             <Form.Label>Medicine name</Form.Label>
                             <Form.Control
                                 style={{ width: "30rem" }}
@@ -271,11 +290,21 @@ class AddMedicine extends Component {
                     </div>
 
                     <div className="field">
-                        <label>Days: {this.returnFieldDescription('daysValid')}</label>
+                        {/* <label>Days: {this.returnFieldDescription('daysValid')}</label>
                         
-                        {this.displayDays()}
-                        
+                        {this.displayDays()} */}
+                        <Card style={{ width: "30rem" }}>
+                            <Card.Header>Days {this.returnFieldDescription('daysValid')}</Card.Header>
+                            <Card.Body>
+                                <Form.Group controlId="check-Input">
+                                    <ListGroup horizontal>{this.displayDays()}</ListGroup>
+                                    
+                                </Form.Group>
+                            </Card.Body>
+                        </Card>    
                     </div>
+
+                    
 
                     <div className="field-dose">
                         
