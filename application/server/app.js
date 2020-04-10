@@ -26,7 +26,11 @@ const uri = 'mongodb+srv://miteshDB:hMsibDp5BPwRAgQ0@gqlmitesh-ic1rs.mongodb.net
     
     const app = express(); 
     app.use(bodyParser.json()); 
-    app.use(cors());
+    app.use(cors({
+        origin: ['https://rhubarb-cobbler-36100.herokuapp.com'],
+        methods: ['GET', 'POST', 'PUT', 'DELETE'],
+        credentials: true
+    })); 
     
 
     // allow cross-origin requests
@@ -47,7 +51,7 @@ const uri = 'mongodb+srv://miteshDB:hMsibDp5BPwRAgQ0@gqlmitesh-ic1rs.mongodb.net
         graphiql: true
     }));
 
-    app.listen(3001, () => {
+    app.listen(process.env.PORT || 3001, () => {
         console.log('now listening for requests on port 3001'); 
     });
     

@@ -117,3 +117,5 @@ dist
 .env.development.local
 .env.test.local
 .env.production.local
+"application/notification/C:\\Users\\kumarm4\\AppData\\Roaming\\npm/"
+"application/server/C:\\Users\\kumarm4\\AppData\\Roaming\\npm/"
