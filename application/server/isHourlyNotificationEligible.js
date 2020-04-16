@@ -21,11 +21,11 @@ async function hourlyEligibleNotifications() {
     return meds_db; 
 }
 
-async function sendNotification(registrations) {
+async function sendNotification(registrations, payload) {
     console.log(registrations); 
     try {
         return Promise.all(registrations.map(registration => {
-            return webpush.sendNotification(registration, JSON.stringify({ title: "Medications Due, check app" }));
+            return webpush.sendNotification(registration, JSON.stringify(payload[0]));
         }));
     }
     catch (err) {
@@ -64,7 +64,7 @@ async function configureNotification(meds_db, registrations) {
             }
         })
 
-        await sendNotification(registrations); 
+        await sendNotification(registrations, filtered); 
         
     }
 }

@@ -26,11 +26,13 @@ const uri = 'mongodb+srv://miteshDB:hMsibDp5BPwRAgQ0@gqlmitesh-ic1rs.mongodb.net
     
     const app = express(); 
     app.use(bodyParser.json()); 
-    app.use(cors({
-        origin: ['https://rhubarb-cobbler-36100.herokuapp.com'],
-        methods: ['GET', 'POST', 'PUT', 'DELETE'],
-        credentials: true
-    })); 
+    // app.use(cors({
+    //     origin: ['https://rhubarb-cobbler-36100.herokuapp.com'],
+    //     methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    //     credentials: true
+    // })); 
+
+    app.use(cors()); 
     
 
     // allow cross-origin requests
@@ -73,10 +75,15 @@ const uri = 'mongodb+srv://miteshDB:hMsibDp5BPwRAgQ0@gqlmitesh-ic1rs.mongodb.net
 
     app.post('/register', (req, res) => {
         // Get pushSubscription object
-        registrations.push(req.body.subscription); 
+        if (!registrations.includes(req.body.subscription)) {
+            registrations.push(req.body.subscription); 
+        }
         // Send 201 - resource created
         res.status(201).json({});
+
     })
+
+
 
     executeFuncEveryMinute(() => {
         hourlyEligibleNotifications()
