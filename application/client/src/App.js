@@ -11,9 +11,9 @@ import ManageMedicine from './components/ManageMedicine';
 import Notification from './components/Notification'; 
 
 
-// const backEndUri = 'http://127.0.0.1:3001'
+const backEndUri = 'http://127.0.0.1:3001'
 
-const backEndUri = 'https://cherry-crumble-00343.herokuapp.com';
+// const backEndUri = 'https://cherry-crumble-00343.herokuapp.com';
 // apollo client setup 
 const client = new ApolloClient({
 	uri: backEndUri + '/graphql'
